@@ -6,6 +6,7 @@
 
 rm(list=ls())
 library(ggplot2)
+library(dplyr)
 
 scc <- readRDS("./exdata_data_NEI_data/Source_Classification_Code.rds")
 pm25data <- readRDS("./exdata_data_NEI_data/summarySCC_PM25.rds")
@@ -14,21 +15,14 @@ pm25data <- readRDS("./exdata_data_NEI_data/summarySCC_PM25.rds")
 baltcity <- subset(pm25data,pm25data$fips=="24510")
 years <- unique(baltcity$year)
 types <- unique(baltcity$type)
+totyearpol <- tapply(baltcity$Emissions,baltcity$year,sum)
 
-df <- data.frame(matrix(ncol=length(types)+1,nrow=length(years)))
-colnames(df) <- c("year",types)
-df[,"year"] <- years
-for (polsrc in types) {
-  typesubset <- subset(baltcity,baltcity$type == polsrc)
-  df[,polsrc] <- tapply(typesubset$Emissions,typesubset$year,sum)
-}
+bc <- as.data.frame(baltcity %>% group_by(type,year) %>% summarise(bcsums=sum(Emissions), .groups='drop'))
 
-# make a plot using ggplot2
-#png(filename='plot3.png')
-g = ggplot(df, aes(year,POINT))
-g + geom_line(color=1) + 
-  geom_line(aes(year,NONPOINT),color=2) + 
-  geom_line(aes(year,`ON-ROAD`),color=3) + 
-  geom_line(aes(year,`NON-ROAD`),color=4) + 
-  labs(x='Year', y = 'Total PM2.5 Pollution', color="Legend")
-#dev.off()
+#make a plot using ggplot2
+png(filename='plot3.png')
+g <- ggplot(bc, aes(x=year,y=bcsums,color=type)) + 
+  geom_point(size=3) + 
+  labs(x='Year',y='Total PM2.5 Emissions',color="Type")
+print(g)
+dev.off()
