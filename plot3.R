@@ -11,7 +11,7 @@ library(dplyr)
 scc <- readRDS("./exdata_data_NEI_data/Source_Classification_Code.rds")
 pm25data <- readRDS("./exdata_data_NEI_data/summarySCC_PM25.rds")
 
-# use tapply to find total pollution numbers for balitmore city
+# use dplyr to find total pollution numbers for balitmore city by type and year
 baltcity <- subset(pm25data,pm25data$fips=="24510")
 years <- unique(baltcity$year)
 types <- unique(baltcity$type)
