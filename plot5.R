@@ -6,7 +6,7 @@ rm(list=ls())
 scc <- readRDS("./exdata_data_NEI_data/Source_Classification_Code.rds")
 pm25data <- readRDS("./exdata_data_NEI_data/summarySCC_PM25.rds")
 
-# find rows of scc that contain coal-related information
+# find rows of scc that contain vehicle-related information
 vehRows <- grep("vehicle",scc$SCC.Level.Two,ignore.case=TRUE)
 vehSensors <- scc$SCC[vehRows]
 
